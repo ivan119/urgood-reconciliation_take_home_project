@@ -1,0 +1,36 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Reservation {
+  id              Int      @id @default(autoincrement())
+  diningAt        DateTime // The UTC time of the reservation
+  status          String   // 'verified', 'canceled', 'no_show', 'disputed'
+  verifiedCovers  Int      // The number of covers that are verified
+  perCoverRate    Int      // Fixed-precision cents (e.g. 500 for $5.00)
+  creatorId       String   // ID or name of the creator
+  restaurantId    String   // ID or name of the restaurant
+  createdAt       DateTime @default(now())
+}
+
+model PayoutState {
+  id               Int      @id @default(autoincrement())
+  creatorId        String
+  restaurantId     String
+  cycleStartDate   DateTime // Monday 5:00 AM UTC
+  cycleEndDate     DateTime // Monday 4:59:59 AM UTC
+  periodAmount     Int      // Amount generated in this cycle (cents)
+  rolledOverAmount Int      // Amount rolled over from previous cycle (cents)
+  totalAmount      Int      // periodAmount + rolledOverAmount (cents)
+  urgoodFees       Int      // $0.50 per cover + 10% creator payout (cents)
+  stripeFees       Int      // 1.5% * (creator payout + URGOOD fees) (cents)
+  payable          Boolean  // true if totalAmount > 2500 cents
+  createdAt        DateTime @default(now())
+
+  @@unique([creatorId, restaurantId, cycleStartDate])
+}

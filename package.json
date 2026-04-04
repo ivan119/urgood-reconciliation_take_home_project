@@ -1,0 +1,24 @@
+{
+  "name": "urgood-reconciliation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@prisma/client": "latest",
+    "csv-parse": "latest",
+    "decimal.js": "latest",
+    "nuxt": "^4.4.2"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@vue/test-utils": "latest",
+    "prisma": "latest",
+    "vitest": "latest"
+  }
+}
