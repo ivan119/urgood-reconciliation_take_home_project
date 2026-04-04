@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@prisma/client": "latest",
+    "@prisma/client": "^7.6.0",
     "csv-parse": "latest",
     "decimal.js": "latest",
     "nuxt": "^4.4.2"
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@vue/test-utils": "latest",
-    "prisma": "latest",
+    "prisma": "^7.6.0",
     "vitest": "latest"
   }
 }
