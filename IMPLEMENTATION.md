@@ -5,7 +5,7 @@ This plan details the technical architecture and implementation strategy for the
 ## Architecture Confirmed
 
 > [!NOTE]
-> The architectural plan has been approved. We are utilizing SQLite for local development and implementing a mock data seeder to substitute the missing `reservations.csv`. The system guarantees zero-floating-point calculations via strict cent-based integer math.
+> The architectural plan has been approved. We are utilizing SQLite for local development and processing the actual `urgood_reservations.csv` file using a CSV parser instead of a mock seeder. The system guarantees zero-floating-point calculations via strict cent-based integer math.
 
 ## Proposed Changes
 
@@ -28,12 +28,12 @@ We will create a pure TypeScript module (e.g., `server/utils/billing.ts`) that w
   - `Stripe Fee` = `1.5% of (Creator Payout + URGOOD Fees)` (with deterministic integer rounding).
   - `Rollover Logic`: Evaluate subtotal for each (creator, restaurant) pair in a cycle. If `current + previous_unpaid > 2500` cents, mark as payable and set carried forward balance to 0. Else mark as not payable and carry forward.
 
-### 3. Data Ingestion (Mock Seeder)
-We will build a Nitro API route `POST /api/admin/seed` that procedurally generates 500 mock reservations using deterministic distributions of dates, verification statuses, and coverage limits.
+### 3. Data Ingestion (CSV Importer)
+We will build a Nitro API route `POST /api/admin/seed` that parses the actual `app/assets/urgood_reservations.csv` utilizing a CSV parsing library (e.g., standard `csv-parse` or similar).
 It will:
 1. Intercept requests to seed the database and purge existing data.
-2. Generate and insert randomized mock reservations conforming to the SQLite schema.
-3. Chronologically compute the cycles and evaluate the `$25` rollover logic, persisting the finalized accounting ledgers directly into the state database.
+2. Read and parse the CSV securely, converting floating-point string values into fixed-precision integer cents.
+3. Hydrate the SQLite schema with real application data and perform accounting calculations.
 
 ### 4. API Endpoints
 - `GET /api/cycles` -> Returns a list of all distinct cycles found in the data.
@@ -58,7 +58,7 @@ It will:
 
 > [!TIP]
 > 1. **Database Credentials**: SQLite initialized for local rapid iteration. Production deployments will inject `DATABASE_URL` via environment variables.
-> 2. **Missing Dataset**: Addressed via a programmatic mock-builder simulating diverse rollover behaviors.
+> 2. **CSV Parsing**: The real dataset was recovered. We will process `urgood_reservations.csv` natively.
 > 3. **Rounding Bias**: We utilize standard Bank's Rounding or explicit `Math.round()` where sub-cent fractions result from calculated standard percentage metrics.
 
 ## Verification Plan
@@ -67,7 +67,7 @@ It will:
 - Run `vitest run` to ensure all pure logic math functions return precise cent-based integer values across various test fixtures simulating rollover conditions and fee calculations.
 
 ### Manual Verification
-- Run the seed command to generate mock data.
+- Run the seed command to ingest the CSV data.
 - Spin up the development server.
 - Verify in the browser that the numbers line up with manual calculations for a sample Creator + Restaurant pair.
 - Ensure the UI adequately displays standard formatting for currency.

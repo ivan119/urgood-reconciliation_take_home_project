@@ -27,5 +27,8 @@ This file tracks the usage of AI tools during the development of this project, a
 7. **Prompt 7 (Prisma v7 Native Implementation):**
    * **User:** Discovered that the previously explored Nuxt module was deprecated and provided official Prisma 7 documentation (`npx prisma init`) indicating a shift towards a native Prisma 7 setup utilizing the new configuration syntax (`prisma.config.ts`).
    * **AI Response:** Rolled back the Nuxt module footprint, configured `prisma.config.ts` per the v7 API standard to resolve the CLI's `url` parameter deprecation constraint, and successfully synchronized the new schema structure directly into the local SQLite instance.
+8. **Prompt 8 (Real Dataset Supplied):**
+   * **User:** Uploaded the actual `urgood_reservations.csv` dataset and requested to update logs and proceed with the implementation.
+   * **AI Response:** Updated the implementation plan, replacing the mock seeder approach with a real CSV parser. Updated documentation logs and proceeded with executing the database schema and ingestion logic.
 
 *We will continue to append significant prompts and AI-driven design decisions or fixes here.*
