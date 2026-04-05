@@ -5,4 +5,5 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   devtools: { enabled: true },
+  css: ['~/assets/main.css']
 });
