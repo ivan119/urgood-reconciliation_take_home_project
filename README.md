@@ -41,7 +41,7 @@ Open [http://localhost:3000](http://localhost:3000).
 Click **"Parse External CSV & Seed Engine"** on the dashboard to ingest the CSV and compute all
 cycle ledgers. This runs the `POST /api/admin/seed` endpoint which:
 - Purges existing data
-- Reads `app/assets/urgood_reservations.csv`
+- Reads `server/assets/urgood_reservations.csv` through Nitro storage.
 - Inserts all 500 reservations
 - Computes payout states per (creator, restaurant) pair chronologically, with rollover
 

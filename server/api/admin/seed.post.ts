@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { parse } from 'csv-parse/sync';
 import { prisma } from '../../utils/prisma'
 import { 
@@ -18,8 +16,12 @@ export default defineEventHandler(async (event) => {
     await prisma.reservation.deleteMany({});
 
     // 2. Read and parse CSV
-    const csvPath = resolve(process.cwd(), 'app/assets/urgood_reservations.csv');
-    const fileContent = readFileSync(csvPath, 'utf8');
+    // Nitro storage 'assets:server' maps to server/assets/
+    const fileContent = await useStorage().getItemRaw<string>('assets:server:urgood_reservations.csv');
+    if (!fileContent) {
+      throw new Error('CSV file not found in storage');
+    }
+
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true

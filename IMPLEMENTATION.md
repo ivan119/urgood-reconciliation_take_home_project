@@ -34,7 +34,7 @@ We will create a pure TypeScript module (e.g., `server/utils/billing.ts`) that w
 
 ### 3. Data Ingestion (CSV Importer)
 
-We will build a Nitro API route `POST /api/admin/seed` that parses the actual `app/assets/urgood_reservations.csv` utilizing a CSV parsing library (e.g., standard `csv-parse` or similar).
+We will build a Nitro API route `POST /api/admin/seed` that parses `server/assets/urgood_reservations.csv` utilizing a CSV parsing library (e.g., standard `csv-parse` or similar). This ensures Vercel/Nitro compatibility via the useStorage('assets:server') mechanism.
 It will:
 
 1. Intercept requests to seed the database and purge existing data.
