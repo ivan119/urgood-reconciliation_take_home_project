@@ -11,8 +11,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.1",
     "@prisma/adapter-better-sqlite3": "^7.6.0",
+    "@prisma/client": "^6.4.1",
     "better-sqlite3": "^12.0.0",
     "csv-parse": "latest",
     "decimal.js": "latest",
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@vue/test-utils": "latest",
-    "prisma": "^7.6.0",
+    "prisma": "^6.4.1",
     "vitest": "latest"
   }
 }
