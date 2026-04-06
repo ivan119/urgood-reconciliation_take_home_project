@@ -7,10 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest run"
   },
   "dependencies": {
     "@prisma/client": "^7.6.0",
+    "@prisma/adapter-better-sqlite3": "^7.6.0",
+    "better-sqlite3": "^12.0.0",
     "csv-parse": "latest",
     "decimal.js": "latest",
     "nuxt": "^4.4.2"
