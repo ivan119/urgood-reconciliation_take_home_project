@@ -1,6 +1,5 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
 }
 
 generator client {
@@ -27,6 +26,7 @@ model PayoutState {
   periodAmount     Int      // Amount generated in this cycle (cents)
   rolledOverAmount Int      // Amount rolled over from previous cycle (cents)
   totalAmount      Int      // periodAmount + rolledOverAmount (cents)
+  covers           Int      @default(0) // Total verified covers in this period
   urgoodFees       Int      // $0.50 per cover + 10% creator payout (cents)
   stripeFees       Int      // 1.5% * (creator payout + URGOOD fees) (cents)
   payable          Boolean  // true if totalAmount > 2500 cents
