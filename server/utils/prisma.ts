@@ -1,23 +1,16 @@
 import pkg from '@prisma/client'
 const { PrismaClient } = pkg
 
-// Safe global singleton for local development
-const globalForPrisma = globalThis as unknown as { prisma: any }
-
-const url = process.env.DATABASE_URL || 'file:./dev.db'
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
 /**
- * URGOOD Final Prisma 7.0+ Singleton
+ * URGOOD Consolidated Prisma Singleton (STABLE)
  * 
- * Works by supplying the datasource explicitly to the client.
+ * By using the standard 'new PrismaClient()' with version 6.x,
+ * we ensure the environment URL is picked up reliably on both
+ * local machines and Vercel.
  */
 
-const createPrismaClient = () => {
-    return new PrismaClient({
-      datasourceUrl: url
-    } as any)
-}
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
