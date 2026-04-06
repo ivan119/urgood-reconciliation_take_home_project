@@ -76,6 +76,7 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
               <thead>
                 <tr>
                   <th>Creator ID</th>
+                  <th>Covers</th>
                   <th>New Period Yield</th>
                   <th>Cleared Rollover</th>
                   <th>URGOOD Assessment</th>
@@ -85,6 +86,7 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
               <tbody>
                 <tr v-for="det in inv.details" :key="det.creatorId">
                   <td><span style="font-weight: 600;">{{ det.creatorId }}</span></td>
+                  <td>{{ det.covers }}</td>
                   <td class="currency">{{ formatCent(det.periodAmount) }}</td>
                   <td class="currency" :style="{ opacity: (det.payable && det.rolledOverAmount > 0) ? 1 : 0.5 }">
                     {{ (det.payable && det.rolledOverAmount > 0) ? formatCent(det.rolledOverAmount) : '—' }}

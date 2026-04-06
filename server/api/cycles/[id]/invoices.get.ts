@@ -57,6 +57,7 @@ export default defineEventHandler(async (event) => {
 
     inv.details.push({
       creatorId: payout.creatorId,
+      covers: payout.covers,
       periodAmount: payout.periodAmount,
       rolledOverAmount: payout.rolledOverAmount,
       payable: payout.payable,

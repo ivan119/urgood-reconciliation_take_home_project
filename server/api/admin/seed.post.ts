@@ -137,6 +137,7 @@ export default defineEventHandler(async (event) => {
           periodAmount,
           rolledOverAmount,
           totalAmount,
+          covers,
           urgoodFees,
           stripeFees,
           payable
@@ -169,6 +170,7 @@ export default defineEventHandler(async (event) => {
                   periodAmount: 0,
                   rolledOverAmount,
                   totalAmount,
+                  covers: 0,
                   urgoodFees: 0,
                   stripeFees: 0,
                   payable
