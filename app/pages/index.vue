@@ -24,9 +24,18 @@ const formatDate = (d) => new Date(d).toISOString().split('T')[0] + ' ' + new Da
 
 <template>
   <div>
+    <Teleport to="body">
+      <div v-if="isSeeding" class="loading-overlay">
+        <div class="spinner spinner-large"></div>
+        <div class="pulse" style="font-weight: 500; letter-spacing: 0.02em;">Processing Reservation Ledger...</div>
+        <div style="font-size: 0.875rem; color: var(--text-muted);">This may take a few seconds</div>
+      </div>
+    </Teleport>
+
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>Settlement Cycles Overview</h2>
       <button @click="seedDatabase" :disabled="isSeeding">
+        <span v-if="isSeeding" class="spinner"></span>
         {{ isSeeding ? 'Processing CSV...' : 'Parse External CSV & Seed Engine' }}
       </button>
     </div>
@@ -36,6 +45,7 @@ const formatDate = (d) => new Date(d).toISOString().split('T')[0] + ' ' + new Da
       <div class="card" style="text-align: center; padding: 4rem;">
         <p style="font-size: 1.1rem; margin-bottom: 1rem;">No cycle ledgers established.</p>
         <button @click="seedDatabase" :disabled="isSeeding">
+          <span v-if="isSeeding" class="spinner"></span>
           {{ isSeeding ? 'Processing...' : 'Execute Initial CSV Ingestion' }}
         </button>
       </div>

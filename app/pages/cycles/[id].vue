@@ -38,8 +38,11 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
 
     <!-- INVOICES TAB -->
     <div v-if="activeTab === 'invoices'">
-      <div v-if="rStatus === 'pending'" style="color: var(--text-muted);">Compiling invoice generation...</div>
-      <div v-else-if="!invoicesData?.invoices?.length" style="color: var(--warning);">No active restaurant invoices found for this cycle window.</div>
+      <div v-if="rStatus === 'pending'" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); padding: 2rem;">
+        <div class="spinner"></div>
+        Compiling invoice generation...
+      </div>
+      <div v-else-if="!invoicesData?.invoices?.length" style="color: var(--warning); padding: 2rem;">No active restaurant invoices found for this cycle window.</div>
       <div v-else style="display: flex; flex-direction: column; gap: 2rem;">
         <div v-for="inv in invoicesData.invoices" :key="inv.restaurantId" class="card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
@@ -106,8 +109,11 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
 
     <!-- PAYOUTS TAB -->
     <div v-if="activeTab === 'payouts'">
-      <div v-if="pStatus === 'pending'" style="color: var(--text-muted);">Compiling creator statements...</div>
-      <div v-else-if="!payoutsData?.creatorPayouts?.length" style="color: var(--warning);">No creator payout data available.</div>
+      <div v-if="pStatus === 'pending'" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); padding: 2rem;">
+        <div class="spinner"></div>
+        Compiling creator statements...
+      </div>
+      <div v-else-if="!payoutsData?.creatorPayouts?.length" style="color: var(--warning); padding: 2rem;">No creator payout data available.</div>
       <div v-else style="display: flex; flex-direction: column; gap: 2rem;">
         <div v-for="sum in payoutsData.creatorPayouts" :key="sum.creatorId" class="card">
            <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">

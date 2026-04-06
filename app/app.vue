@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <NuxtLoadingIndicator color="var(--primary)" :height="3" />
     <NuxtRouteAnnouncer />
     <header>
       <div>
