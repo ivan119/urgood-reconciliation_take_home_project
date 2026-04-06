@@ -10,11 +10,26 @@ summaries through a server-side API and a navigation UI.
 
 **Prerequisites:** Node.js 20+, npm
 
+### 1) Configure environment
+
+Create a local env file (not committed) with your Postgres URLs:
+
+```bash
+# .env (or .env.local)
+# Used by the app runtime (pooler is fine here)
+DATABASE_URL="postgresql://..."
+
+# Used by Prisma CLI for migrations/db push (direct, non-pgbouncer)
+DIRECT_URL="postgresql://..."
+```
+
+### 2) Install, create tables, run
+
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Push the Prisma schema to the local SQLite database
+# 2. Create tables from schema (fastest for dev)
 npx prisma db push
 
 # 3. Start the development server
@@ -42,8 +57,8 @@ npm test
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
 | **Framework** | Nuxt 4 (Vue 3 + Nitro) | Full-stack in one repo — server API routes and the frontend live together with no extra setup |
-| **ORM** | Prisma 7 | Type-safe queries, excellent SQLite support, schema-as-code keeps the data model self-documenting |
-| **Database** | SQLite (dev) | Zero-config, file-based DB is ideal for a 48hr take-home; swap `DATABASE_URL` for Postgres in production |
+| **ORM** | Prisma 7 | Type-safe queries; uses Prisma 7 `prisma.config.ts` and an adapter-based client setup |
+| **Database** | PostgreSQL (Supabase-compatible) | Works locally and in deployment environments; `DIRECT_URL` is used for CLI operations |
 | **Styling** | Vanilla CSS (CSS custom properties) | No build tooling dependency, full control over the design system without Tailwind purge complexity |
 | **Testing** | Vitest | Native ESM support, no transpilation needed, compatible with the same TypeScript config the app uses |
 | **CSV parsing** | `csv-parse/sync` | Robust, handles edge cases (quotes, CRLF), a de-facto standard in the Node ecosystem |
@@ -119,23 +134,16 @@ npm test
 
 ## Deploying to Vercel (Production)
 
-As Vercel uses ephemeral serverless functions, the local SQLite database will **not** persist data. To deploy our live URL:
+Provision a hosted PostgreSQL database (e.g. Supabase / Neon) and set env vars in your hosting platform:
 
 ### 1. Provision a PostgreSQL Database
 - Create a free instance on [Neon](https://neon.tech/) or [Supabase](https://supabase.com/).
 - Grab your **Connection String** (begins with `postgresql://`).
 
 ### 2. Configure Your Vercel Project
-- Add an environment variable in the Vercel Dashboard named `DATABASE_URL` with your connection string.
+- Add environment variables:
+  - `DATABASE_URL` (runtime; a pooler URL is OK)
+  - `DIRECT_URL` (CLI; direct connection is recommended)
 
-### 3. Finalize the Schema for Production
-Before pushing your final version to Vercel, update one line in `prisma/schema.prisma`:
-```prisma
-datasource db {
-  provider = "postgresql" // change from "sqlite" to "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-### 4. Push to production
-Once changed, run `npx prisma db push` against your remote database to create the tables, and then deploy your repository to Vercel.
+### 3. Create tables
+Run `npx prisma db push` (or migrations, if you create them) against your remote database, then deploy.

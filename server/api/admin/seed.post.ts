@@ -200,6 +200,16 @@ export default defineEventHandler(async (event) => {
     return { success: true, message: 'Database seeded successfully', recordsProcessed: records.length, payoutStatesCreated: payoutStatesData.length };
   } catch (error: any) {
     console.error('Seed Error:', error);
-    return createError({ statusCode: 500, message: 'Seeding failed', data: error.message });
+    const message = String(error?.message ?? error)
+    if (message.includes('does not exist in the current database')) {
+      return createError({
+        statusCode: 400,
+        message: 'Database schema not applied yet',
+        data:
+          'Run `npx prisma migrate dev --name init` (recommended) or `npx prisma db push`, then retry POST /api/admin/seed.',
+      })
+    }
+
+    return createError({ statusCode: 500, message: 'Seeding failed', data: message });
   }
 });

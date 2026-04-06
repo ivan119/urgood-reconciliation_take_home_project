@@ -7,21 +7,21 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && prisma generate && prisma db push --accept-data-loss",
+    "postinstall": "nuxt prepare && prisma generate",
     "test": "vitest run"
   },
   "dependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.6.0",
-    "@prisma/client": "^6.4.1",
-    "better-sqlite3": "^12.0.0",
+    "@prisma/adapter-pg": "^7.6.0",
+    "@prisma/client": "^7.6.0",
     "csv-parse": "latest",
     "decimal.js": "latest",
-    "nuxt": "^4.4.2"
+    "nuxt": "^4.4.2",
+    "pg": "^8.16.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@vue/test-utils": "latest",
-    "prisma": "^6.4.1",
+    "prisma": "^7.6.0",
     "vitest": "latest"
   }
 }
