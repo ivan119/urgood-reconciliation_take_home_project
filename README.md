@@ -114,3 +114,28 @@ npm test
 
 6. **Pagination on invoice/payout endpoints** — with 500 reservations and many creator-restaurant pairs,
    API responses can grow large. Cursor-based pagination on `GET /api/cycles/:id/invoices` would help.
+
+---
+
+## Deploying to Vercel (Production)
+
+As Vercel uses ephemeral serverless functions, the local SQLite database will **not** persist data. To deploy our live URL:
+
+### 1. Provision a PostgreSQL Database
+- Create a free instance on [Neon](https://neon.tech/) or [Supabase](https://supabase.com/).
+- Grab your **Connection String** (begins with `postgresql://`).
+
+### 2. Configure Your Vercel Project
+- Add an environment variable in the Vercel Dashboard named `DATABASE_URL` with your connection string.
+
+### 3. Finalize the Schema for Production
+Before pushing your final version to Vercel, update one line in `prisma/schema.prisma`:
+```prisma
+datasource db {
+  provider = "postgresql" // change from "sqlite" to "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+### 4. Push to production
+Once changed, run `npx prisma db push` against your remote database to create the tables, and then deploy your repository to Vercel.
