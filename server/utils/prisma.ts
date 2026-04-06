@@ -24,7 +24,11 @@ const createPrismaClient = () => {
     return new PrismaClient({ adapter })
   } else {
     // PostgreSQL Mode (Vercel / Production)
-    return new PrismaClient()
+    return new PrismaClient({
+      datasources: {
+        db: { url }
+      }
+    })
   }
 }
 
