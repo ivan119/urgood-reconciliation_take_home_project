@@ -45,7 +45,7 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
       <div v-else-if="!invoicesData?.invoices?.length" style="color: var(--warning); padding: 2rem;">No active restaurant invoices found for this cycle window.</div>
       <div v-else style="display: flex; flex-direction: column; gap: 2rem;">
         <div v-for="inv in invoicesData.invoices" :key="inv.restaurantId" class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+          <div class="flex-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
             <div>
               <p style="margin: 0; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Invoice For</p>
               <h3 style="margin: 0; font-size: 1.5rem;">Restaurant ID: {{ inv.restaurantId }}</h3>
@@ -58,7 +58,7 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
             </div>
           </div>
           
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+          <div class="stats-grid" style="margin-bottom: 2rem;">
              <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
               <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cleared Creator Payout</div>
               <div class="currency" style="font-size: 1.25rem; font-weight: 600;">{{ formatCent(inv.totalCreatorPayments) }}</div>
@@ -116,12 +116,12 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
       <div v-else-if="!payoutsData?.creatorPayouts?.length" style="color: var(--warning); padding: 2rem;">No creator payout data available.</div>
       <div v-else style="display: flex; flex-direction: column; gap: 2rem;">
         <div v-for="sum in payoutsData.creatorPayouts" :key="sum.creatorId" class="card">
-           <div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+           <div class="flex-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; align-items: stretch;">
             <div style="display: flex; flex-direction: column; justify-content: center;">
               <p style="margin: 0; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Creator Settlement For</p>
               <h3 style="margin: 0; font-size: 1.5rem;">ID: {{ sum.creatorId }}</h3>
             </div>
-            <div style="display: flex; gap: 1rem;">
+            <div class="summary-container">
                <div style="background: var(--warning-bg); border: 1px solid rgba(245, 158, 11, 0.2); padding: 1rem 1.5rem; border-radius: 8px; text-align: right; min-width: 150px;">
                 <div style="font-size: 0.875rem; color: var(--warning); margin-bottom: 0.25rem;">Rolled Over</div>
                 <div class="currency" style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">

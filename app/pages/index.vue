@@ -32,8 +32,8 @@ const formatDate = (d) => new Date(d).toISOString().split('T')[0] + ' ' + new Da
       </div>
     </Teleport>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-      <h2>Settlement Cycles Overview</h2>
+    <div class="flex-header" style="margin-bottom: 2rem;">
+      <h2 style="margin: 0;">Settlement Cycles Overview</h2>
       <button @click="seedDatabase" :disabled="isSeeding">
         <span v-if="isSeeding" class="spinner"></span>
         {{ isSeeding ? 'Processing CSV...' : 'Parse External CSV & Seed Engine' }}
@@ -51,7 +51,7 @@ const formatDate = (d) => new Date(d).toISOString().split('T')[0] + ' ' + new Da
       </div>
     </div>
     
-    <div v-else style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    <div v-else class="stats-grid">
       <NuxtLink 
         v-for="cycle in data.cycles" 
         :key="cycle.cycleStartDate"
