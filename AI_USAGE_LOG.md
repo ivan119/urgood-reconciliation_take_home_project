@@ -51,11 +51,16 @@ This file tracks the usage of AI tools during the development of this project, a
    * **User:** Requested a final review of the codebase.
    * **AI Response:** Executed a comprehensive code review, identified several UX issues (misleading labels, missing loading states), and submission blockers (missing test config). Remedied these by updating the `vitest.config.ts`, fixing logical bugs in the UI, and expanding the `README.md` to satisfy all project requirements.
 
+1. **Prompt 14 (Mobile Responsiveness & Final Polish):**
+   * **User:** Requested a mobile-friendly layout for the dashboard after noting UI truncation and horizontal scrolling issues on handsets.
+   * **AI Response:** Implemented a tailored responsive design system in `main.css`, utilizing media queries and utility classes to stack dashboard cards and summary statistics vertically on small viewports while ensuring all financial data remains legible and balanced.
+
 ## Where AI was wrong (Critical Reflections)
 
 * **Prisma Module Depreciation:** AI initially suggested `@prisma/nuxt` which was deprecated/troublesome for Nuxt 4. Had to pivot back to a native implementation.
 * **ESM Circular Dependencies:** AI code for the Prisma client didn't initially account for Nuxt's server-side environment nuances, leading to runtime failures that required manual refactoring into a singleton pattern.
 * **Path Resolution:** AI assumed `@` aliases in `vitest`, which aren't automatically resolved in a standalone vitest environment without explicit configuration. Fixed by creating a explicit `vitest.config.ts`.
 * **Logical UX Errors:** AI initially produced a badge label that incorrectly stated "Defers > $25" for records below the threshold. This was caught and corrected to "Below $25" during final verification.
+* **UI Layout Assumptions:** AI initially assumed a fixed-width grid which broke on mobile viewports. Manual intervention was needed to move inline styles into a responsive CSS system to ensure cross-device consistency.
 
-*AI tools were invaluable for boilerplate generation and logical structuring, but required human oversight for environment-specific configuration and business logic edge-cases.*
+*AI tools were invaluable for boilerplate generation and logical structuring, but required human oversight for environment-specific configuration, mobile UX refinement, and business logic edge-cases.*
