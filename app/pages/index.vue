@@ -1,7 +1,11 @@
 <script setup>
 const { data, status, refresh } = await useFetch('/api/cycles');
 
+const isSeeding = ref(false);
+
 const seedDatabase = async () => {
+  if (isSeeding.value) return;
+  isSeeding.value = true;
   try {
     const res = await $fetch('/api/admin/seed', { method: 'POST' });
     if (res.success) {
@@ -10,24 +14,30 @@ const seedDatabase = async () => {
     }
   } catch (e) {
     alert('Error seeding database: ' + (e.data?.message || e.message));
+  } finally {
+    isSeeding.value = false;
   }
 };
 
-const formatDate = (d) => new Date(d).toUTCString();
+const formatDate = (d) => new Date(d).toISOString().split('T')[0] + ' ' + new Date(d).toISOString().split('T')[1].slice(0, 5) + ' UTC';
 </script>
 
 <template>
   <div>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>Settlement Cycles Overview</h2>
-      <button @click="seedDatabase">Parse External CSV & Seed Engine</button>
+      <button @click="seedDatabase" :disabled="isSeeding">
+        {{ isSeeding ? 'Processing CSV...' : 'Parse External CSV & Seed Engine' }}
+      </button>
     </div>
 
     <div v-if="status === 'pending'">Loading cycles...</div>
     <div v-else-if="!data?.cycles?.length">
       <div class="card" style="text-align: center; padding: 4rem;">
         <p style="font-size: 1.1rem; margin-bottom: 1rem;">No cycle ledgers established.</p>
-        <button @click="seedDatabase">Execute Initial CSV Ingestion</button>
+        <button @click="seedDatabase" :disabled="isSeeding">
+          {{ isSeeding ? 'Processing...' : 'Execute Initial CSV Ingestion' }}
+        </button>
       </div>
     </div>
     

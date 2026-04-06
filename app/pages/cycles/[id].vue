@@ -1,7 +1,7 @@
 <script setup>
 const route = useRoute();
 const cycleId = route.params.id;
-const cycleDateStr = new Date(cycleId).toUTCString();
+const cycleDateStr = new Date(cycleId).toISOString().replace('T', ' ').replace('.000Z', ' UTC');
 
 const { data: invoicesData, status: rStatus } = await useFetch(`/api/cycles/${cycleId}/invoices`);
 const { data: payoutsData, status: pStatus } = await useFetch(`/api/cycles/${cycleId}/payouts`);
@@ -92,7 +92,7 @@ const activeTab = ref('invoices'); // 'invoices' or 'payouts'
                   <td class="currency" style="color: var(--warning);">{{ formatCent(det.urgoodFees) }}</td>
                   <td>
                     <span v-if="det.payable" class="badge payable">Disbursed</span>
-                    <span v-else class="badge rolled">Defers &gt; $25 limit</span>
+                    <span v-else class="badge rolled">Below $25 — Carried Forward</span>
                   </td>
                 </tr>
               </tbody>
