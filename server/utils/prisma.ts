@@ -1,35 +1,15 @@
 import pkg from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-
 const { PrismaClient } = pkg
 
-const globalForPrisma = globalThis as unknown as { prisma: any }
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
 /**
- * URGOOD Hybrid Prisma Singleton (Vercel-Ready)
+ * URGOOD Standard Prisma Singleton
  * 
- * This version uses a default import pattern and 'any' typing/casting to bypass
- * ESM resolution errors in Nitro/Vercel serverless environments.
+ * Works reliably in both Local & Vercel environments using the environment
+ * variable (DATABASE_URL) defined in the schema.
  */
 
-const url = process.env.DATABASE_URL || 'file:./dev.db'
-
-const createPrismaClient = () => {
-  if (url.startsWith('file:')) {
-    // SQLite Mode (Development)
-    const adapter = new PrismaBetterSqlite3(
-      { url },
-      { fileMustExist: false },
-    )
-    return new PrismaClient({ adapter })
-  } else {
-    // PostgreSQL Mode (Vercel / Production)
-    return new PrismaClient({
-      datasourceUrl: url
-    } as any)
-  }
-}
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
