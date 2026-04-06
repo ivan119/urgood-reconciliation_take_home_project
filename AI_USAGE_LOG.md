@@ -31,4 +31,31 @@ This file tracks the usage of AI tools during the development of this project, a
    * **User:** Uploaded the actual `urgood_reservations.csv` dataset and requested to update logs and proceed with the implementation.
    * **AI Response:** Updated the implementation plan, replacing the mock seeder approach with a real CSV parser. Updated documentation logs and proceeded with executing the database schema and ingestion logic.
 
-*We will continue to append significant prompts and AI-driven design decisions or fixes here.*
+9. **Prompt 9 (Consolidating the Financial Engine):**
+   * **User:** Requested the final implementation of the cent-based arithmetic logic, cycle boundary calculation (Monday 5 AM UTC), fee engine, and recursive rollover persistence logic within a pure TypeScript module.
+   * **AI Response:** Developed `server/utils/billing.ts`, utilizing UTC-safe date manipulation to ensure strict cycle boundaries and integer-only math for the payout threshold ($25.00), URGOOD fees, and Stripe fees.
+
+10. **Prompt 10 (Debugging Nuxt/Prisma ESM Runtime Errors):**
+   * **User:** Reported a critical `ERR_MODULE_NOT_FOUND` circular dependency and initialization error when attempting to boot Nuxt with the Prisma client in its default configuration.
+   * **AI Response:** Diagnosed the ESM resolution conflict. Recommended and implemented a Prisma singleton pattern using `globalThis` to prevent multiple instance initialization during HMR, and properly configured the Prisma Better SQLite3 adapter to ensure smooth runtime operations within the Nuxt 4 Nitro server.
+
+11. **Prompt 11 (Real-World CSV Ingestion and Reconciliation):**
+   * **User:** Prompted for the delivery of the `POST /api/admin/seed` handler to process the 500-record CSV dataset into the persistence layer.
+   * **AI Response:** Implemented a robust ingestion route using `csv-parse/sync`, mapping raw record identifiers to the Prisma schema, and executing a chronological calculation pass to build the `PayoutState` ledger while correctly managing cross-cycle rollovers.
+
+12. **Prompt 12 (Frontend Dashboard & Visual Fidelity):**
+   * **User:** Requested a premium-looking dashboard that allows navigation between settlement cycles and displays detailed breakdowns of invoices and payouts.
+   * **AI Response:** Built a multi-page Vue 3 interface utilizing Nuxt 4's new feature set, implementing a custom CSS design system with a dark-mode aesthetic, interactive cards, and tabbed navigation for a clean User Experience.
+
+13. **Prompt 13 (Final Polish & Code Review Fixes):**
+   * **User:** Requested a final review of the codebase.
+   * **AI Response:** Executed a comprehensive code review, identified several UX issues (misleading labels, missing loading states), and submission blockers (missing test config). Remedied these by updating the `vitest.config.ts`, fixing logical bugs in the UI, and expanding the `README.md` to satisfy all project requirements.
+
+### Where AI was wrong (Critical Reflections)
+
+* **Prisma Module Depreciation:** AI initially suggested `@prisma/nuxt` which was deprecated/troublesome for Nuxt 4. Had to pivot back to a native implementation.
+* **ESM Circular Dependencies:** AI code for the Prisma client didn't initially account for Nuxt's server-side environment nuances, leading to runtime failures that required manual refactoring into a singleton pattern.
+* **Path Resolution:** AI assumed `@` aliases in `vitest`, which aren't automatically resolved in a standalone vitest environment without explicit configuration. Fixed by creating a explicit `vitest.config.ts`.
+* **Logical UX Errors:** AI initially produced a badge label that incorrectly stated "Defers > $25" for records below the threshold. This was caught and corrected to "Below $25" during final verification.
+
+*AI tools were invaluable for boilerplate generation and logical structuring, but required human oversight for environment-specific configuration and business logic edge-cases.*
