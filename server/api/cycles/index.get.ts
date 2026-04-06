@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-
-const client = new PrismaClient();
+import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async () => {
   // Find distinct cycles
-  const cycles = await client.payoutState.findMany({
+  const cycles = await prisma.payoutState.findMany({
     select: {
       cycleStartDate: true,
       cycleEndDate: true,

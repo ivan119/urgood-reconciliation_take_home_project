@@ -1,9 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parse } from 'csv-parse/sync';
-import prisma from '../../utils/prisma'; // Actually wait, in Nuxt with Prisma, people use `lib/prisma` or global `prisma`. Let's just instantiate Prisma client here or we can use the Nuxt Prisma module if configured correctly.
-// Let's instantiate it manually for standard seed.
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../utils/prisma'
 import { 
   getCycleDates, 
   isEligible, 
@@ -13,13 +11,11 @@ import {
   isPayable 
 } from '../../utils/billing';
 
-const client = new PrismaClient();
-
 export default defineEventHandler(async (event) => {
   try {
     // 1. Purge existing data
-    await client.payoutState.deleteMany({});
-    await client.reservation.deleteMany({});
+    await prisma.payoutState.deleteMany({});
+    await prisma.reservation.deleteMany({});
 
     // 2. Read and parse CSV
     const csvPath = resolve(process.cwd(), 'app/assets/urgood_reservations.csv');
@@ -46,7 +42,7 @@ export default defineEventHandler(async (event) => {
       };
     });
 
-    await client.reservation.createMany({
+    await prisma.reservation.createMany({
       data: reservationsInput
     });
 
@@ -81,7 +77,8 @@ export default defineEventHandler(async (event) => {
       }
 
       const cycle = cyclesMap.get(cycleKey)!;
-      const pairKey = `${res.creatorId}_${res.restaurantId}`;
+      // Use a delimiter that won't collide with common IDs (avoid '_' collisions).
+      const pairKey = `${res.creatorId}::${res.restaurantId}`;
 
       if (!cycle.payouts[pairKey]) cycle.payouts[pairKey] = 0;
       if (!cycle.covers[pairKey]) cycle.covers[pairKey] = 0;
@@ -101,7 +98,7 @@ export default defineEventHandler(async (event) => {
       const cycle = cyclesMap.get(cycleKey)!;
 
       for (const pairKey in cycle.payouts) {
-        const [creatorId, restaurantId] = pairKey.split('_');
+        const [creatorId, restaurantId] = pairKey.split('::');
         
         const periodAmount = cycle.payouts[pairKey];
         const covers = cycle.covers[pairKey];
@@ -152,7 +149,7 @@ export default defineEventHandler(async (event) => {
       // Usually yes, the payout state persists. Let's include pairs with active rollovers even if 0 new activity.
       for (const pairKey in rolloverBalances) {
           if (!cycle.payouts[pairKey] && rolloverBalances[pairKey] > 0) {
-              const [creatorId, restaurantId] = pairKey.split('_');
+              const [creatorId, restaurantId] = pairKey.split('::');
               const rolledOverAmount = rolloverBalances[pairKey];
               const periodAmount = 0;
               const totalAmount = rolledOverAmount;
@@ -180,8 +177,22 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    await client.payoutState.createMany({
-      data: payoutStatesData
+    // Final Deduplication Pass:
+    // We utilize a Map keyed by [creatorId, restaurantId, cycleStartDate] to enforce uniqueness.
+    // This approach ensures that if a record exists for both 'active cycle activity' and
+    // 'idle rollover-only carryforward' within the same loop iteration, they are safely merged
+    // (with the uniquePayoutStates.set ensuring the most accurate entry is preserved).
+    // This mirrors the Database's UNIQUE constraint (@@unique([creatorId, restaurantId, cycleStartDate])).
+    const uniquePayoutStates = new Map<string, (typeof payoutStatesData)[number]>()
+    for (const ps of payoutStatesData) {
+      uniquePayoutStates.set(
+        `${ps.creatorId}::${ps.restaurantId}::${ps.cycleStartDate.toISOString()}`,
+        ps,
+      )
+    }
+
+    await prisma.payoutState.createMany({
+      data: Array.from(uniquePayoutStates.values()),
     });
 
     return { success: true, message: 'Database seeded successfully', recordsProcessed: records.length, payoutStatesCreated: payoutStatesData.length };

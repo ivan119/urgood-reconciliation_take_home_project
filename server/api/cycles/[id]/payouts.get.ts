@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const client = new PrismaClient();
+import { prisma } from '../../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   const cycleDateRaw = getRouterParam(event, 'id');
@@ -16,7 +14,7 @@ export default defineEventHandler(async (event) => {
     whereClause.creatorId = query.creator_id;
   }
 
-  const payouts = await client.payoutState.findMany({
+  const payouts = await prisma.payoutState.findMany({
     where: whereClause
   });
 
